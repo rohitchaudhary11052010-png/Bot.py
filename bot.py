@@ -401,10 +401,16 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     username = update.effective_user.username
     db.create_user(user_id, username)
+    
+    # 🔥 AUTOMATIC ADMIN APPROVAL: Agar aap admin ho, toh database me khud ko automatic approve kar do
+    if user_id in ADMIN_IDS:
+        db.approve_user(user_id, days=3650) # 10 saal ke liye automatic approve
+        
     if await is_user_approved(user_id):
-        await update.message.reply_text(f"✅ Welcome back! Your account is active.\nUse /attack <ip> <port> <duration> to begin.")
+        await update.message.reply_text(f"✅ Welcome back, Admin! Your account is active.\nUse /help to see all commands.")
     else:
         await update.message.reply_text("❌ Access Denied! Please contact the administrator for approval.")
+        
 
 async def attack_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
